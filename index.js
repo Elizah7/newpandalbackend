@@ -1,5 +1,5 @@
 const express = require("express")
-const app = express(express())
+const app = express()
 const cors = require("cors")
 const { imagesRoute } = require("./routes/images.routes")
 const { connection } = require("./config/db")
@@ -21,7 +21,7 @@ app.use("/videos", videoRouter)
 app.use("/reset_password", sendEmailRoutes)
 
 
-app.listen(process.env.port, async () => {
+app.listen(process.env.PORT, async () => {
    try {
       await connection
       console.log("connected to mongodb")
