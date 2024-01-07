@@ -14,7 +14,7 @@ require("dotenv").config()
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 app.use(cors())
 app.use(express.json())
-
+app.use(express.static('public'));
 app.use("/admin", adminRouter)
 app.use("/users", userRouter)
 app.use("/volenteer", volenteerRouter)
