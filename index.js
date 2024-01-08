@@ -11,7 +11,10 @@ const volenteerRouter = require("./routes/volentire.route")
 const sendEmailRoutes = require("./routes/sendemail.routes")
 require("dotenv").config()
 
-app.get('/favicon.ico', (req, res) => res.status(204).end());
+app.get('/favicon.ico', (req, res) => {
+   res.status(204).end();
+ });
+ 
 app.use(cors())
 app.use(express.json())
 app.use(express.static('public'));
