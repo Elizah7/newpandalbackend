@@ -4,7 +4,7 @@ const UserModel = require("../models/user.model");
 const adminauth = async (req, res, next) => {
 
     const token = req.headers.authorization;
-    console.log("token",token)
+    // console.log("token",token)
     if (token) {
         const decoded = await jwt.verify(token, "pandal");
         if (decoded) {

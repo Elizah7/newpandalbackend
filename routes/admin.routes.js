@@ -15,19 +15,19 @@ cloudinary.config({
 });
 
 
-adminRouter.get("/",adminauth, async (req, res) => {
- 
+adminRouter.get("/", adminauth, async (req, res) => {
+
     try {
-         const singleuser = await UserModel.findById({_id:req.query})
-         console.log(singleuser)
-         if(singleuser){
-            res.status(200).send({msg:"single user exists",data:singleuser})
-         }
-         else{
-            res.status(404).send({msg:"user does not exists"})
-         }
+        const singleuser = await UserModel.findById({ _id: req.query })
+        console.log(singleuser)
+        if (singleuser) {
+            res.status(200).send({ msg: "single user exists", data: singleuser })
+        }
+        else {
+            res.status(404).send({ msg: "user does not exists" })
+        }
     } catch (error) {
-        res.status(404).send({msg:error})
+        res.status(404).send({ msg: error })
     }
 })
 
@@ -59,7 +59,7 @@ adminRouter.post("/register", async (req, res) => {
 })
 adminRouter.patch("/upload/:id", upload.single("image"), async (req, res) => {
     const _id = req.params.id
-   console.log("req",req.file)
+    console.log("req", req.file)
     try {
         let ExistingUser = await UserModel.findById(_id)
         console.log(ExistingUser)

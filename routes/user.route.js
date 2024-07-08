@@ -85,6 +85,7 @@ userRouter.post("/login", async (req, res) => {
                 if (result) {
                     let token = jwt.sign({ userID: User[0]._id }, "pandal");
                     res.send({ msg: `Login Success ! WelcomeBack ${User[0].name}`, token: token, user: User });
+                    
                 } else {
                     res.send({ msg: "Wrong Password" })
                 }

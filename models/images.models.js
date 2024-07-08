@@ -1,16 +1,16 @@
+const mongoose = require("mongoose");
+const likeSchema = require("./likesSchema")
 
-const mongoose = require("mongoose")
+const imageSchema = mongoose.Schema({
+  image: { type: String, required: true },
+  userID: { type: String, required: true },
+  year: { type: String, required: true },
+  time: { type: String, required: true },
+  likes: [likeSchema]
+});
 
-const imageShema = mongoose.Schema({
-    image: String,
-    userID: String,
-    year: String,
-    time:String
-})
-
-
-const imageModel = mongoose.model("images", imageShema)
+const imageModel = mongoose.model("Image", imageSchema);
 
 module.exports = {
-    imageModel
-}
+  imageModel
+};

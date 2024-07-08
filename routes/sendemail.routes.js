@@ -3,28 +3,16 @@ const nodemailer = require("nodemailer");
 const UserModel = require("../models/user.model");
 const jwt = require("jsonwebtoken")
 const sendEmailRoutes = express.Router();
-const { google } = require("googleapis")
-const { clientId, clientSecret, refreshToken, user } = require("../config/googleauth")
+
 
 sendEmailRoutes.post("/", async (req, res) => {
-    const OAuth2 = google.auth.OAuth2
-    const OAuth2_Client = new OAuth2(clientId, clientSecret)
-    OAuth2_Client.setCredentials({ refresh_token: refreshToken })
-
-    const accessToken = await OAuth2_Client.getAccessToken()
-
-    const transPorter = await nodemailer.createTransport({
-        service: "gmail",
+    let transPorter = nodemailer.createTransport({
+        service: 'Gmail',
         auth: {
-            type: "OAuth2",
-            user: user,
-            clientId: clientId,
-            clientSecret: clientSecret,
-            refreshToken: refreshToken,
-            accessToken
-        },
-        secure: false
-    })
+            user: 'uddeshkrrish@gmail.com',
+            pass: 'cfby oyec abgu nfpo'
+        }
+    });
     const { email } = req.body;
     console.log(email)
     try {
@@ -37,7 +25,7 @@ sendEmailRoutes.post("/", async (req, res) => {
             try {
                 const updateduser = await UserModel.findByIdAndUpdate(singleuser._id, { verifytoken: token })
                 const mailOption = {
-                    from: user,
+                    from: "uddeshkrrish@gmail.com",
                     to: email,
                     text: `This link is valid for 10 minutes only http://localhost:3000/forgot_password/${singleuser._id}/${token}`
                 }

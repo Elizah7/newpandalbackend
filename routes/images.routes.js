@@ -48,6 +48,35 @@ imagesRoute.post("/upload", adminauth, upload.single("image"), async (req, res) 
     }
 })
 
+
+router.post('/images/:id/like', async (req, res) => {
+    try {
+      const imageId = req.params.id;
+      const { userID } = req.body;
+  
+      const image = await imageModel.findById(imageId);
+      if (!image) {
+        return res.status(404).send({ message: 'Image not found' });
+      }
+  
+      // Check if the user has already liked the image
+      const likeIndex = image.likes.findIndex(like => like.userID === userID);
+      if (likeIndex === -1) {
+        // If not liked, add a like
+        image.likes.push({ userID });
+      } else {
+        // If already liked, remove the like
+        image.likes.splice(likeIndex, 1);
+      }
+  
+      await image.save();
+  
+      res.send({ message: 'Image like status updated', image });
+    } catch (error) {
+      res.status(500).send({ message: 'Server error', error });
+    }
+  });
+  
 imagesRoute.get("/", async (req, res) => {
 
     try {
