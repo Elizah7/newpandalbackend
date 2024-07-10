@@ -49,7 +49,7 @@ imagesRoute.post("/upload", adminauth, upload.single("image"), async (req, res) 
 })
 
 
-router.post('/images/:id/like', async (req, res) => {
+imagesRoute.post('/images/:id/like', async (req, res) => {
     try {
       const imageId = req.params.id;
       const { userID } = req.body;
