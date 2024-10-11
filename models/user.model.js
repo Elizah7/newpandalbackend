@@ -7,10 +7,9 @@ const userSchema = mongoose.Schema({
     password: String,
     year: String,
     image:String,
-    gender:String,
     role:String,
-    address:String,
-    verifytoken:String
+    verifytoken:String,
+    createdAt: { type: Date, default: Date.now },
 })
 
 const UserModel = mongoose.model("user", userSchema)

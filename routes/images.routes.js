@@ -32,19 +32,15 @@ imagesRoute.post("/upload", adminauth, upload.single("image"), async (req, res) 
 
         try {
             const d = new Date();
-            const hour = d.getHours()
-            const minute = d.getMinutes()
-            const seconds = d.getSeconds()
-            const time = hour + ":" + minute + ":" + seconds
             const year = d.getFullYear()
-            const savedImg = new imageModel({ image: downloadUrl, year: year, userID, time })
+            const savedImg = new imageModel({ image: downloadUrl, year: year, userID })
             await savedImg.save()
             res.status(200).send({ msg: "Image uploaded", data: savedImg })
         } catch (error) {
-            res.send({ msg: "msg", err: error.message })
+           return res.send({ msg: "msg", err: error.message })
         }
     } catch (error) {
-        res.send({ msg: "msg", err: error.message })
+      return  res.send({ msg: "msg", err: error.message })
     }
 })
 
@@ -71,26 +67,41 @@ imagesRoute.post('/images/:id/like', async (req, res) => {
   
       await image.save();
   
-      res.send({ message: 'Image like status updated', image });
+     return res.send({ message: 'Image like status updated', image });
     } catch (error) {
-      res.status(500).send({ message: 'Server error', error });
+    return  res.status(500).send({ message: 'Server error', error });
     }
   });
   
-imagesRoute.get("/", async (req, res) => {
-
+  imagesRoute.get("/", async (req, res) => {
+    const { page } = req.query; 
+    
+    const limit = 10;
+    console.log(page)
     try {
-        const data = await imageModel.find()
-        res.status(200).send({ msg: "total images", data: data })
+      const data = await imageModel
+        .find()
+        .skip((page - 1) * limit) // Skip the images from previous pages
+        .limit(Number(limit)); // Limit the number of images per request
+  
+      const totalImages = await imageModel.countDocuments(); // Get the total count of images
+  
+      res.status(200).send({
+        msg: "Total images",
+        data: data,
+        currentPage: page,
+        totalPages: Math.ceil(totalImages / limit), // Calculate total pages
+      });
+      // console.log(data)
     } catch (error) {
-        res.send({ msg: "msg", err: error.message })
+     return res.status(500).send({ msg: "An error occurred", err: error.message });
     }
+  });
+  
 
-})
+// imagesRoute.delete("/delete", (req, res) => {
 
-imagesRoute.delete("/delete", (req, res) => {
-
-})
+// })
 
 
 module.exports = {

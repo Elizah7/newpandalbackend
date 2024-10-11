@@ -4,12 +4,10 @@ const upload = require("../middelwares/multer")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const UserModel = require("../models/user.model")
+const { cloudUpload } = require("../config/Cloudinary.config")
+
 require("dotenv").config()
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUD_API_KEY,
-    api_secret: process.env.CLOUD_API_SECRET,
-});
+
 
 
 const volenteerRouter = express.Router()
@@ -18,25 +16,25 @@ volenteerRouter.post("/register", async (req, res) => {
     try {
         bcrypt.hash(password, 5, async (err, hash) => {
             if (err) {
-                res.send(`Registration Error: - ${err}`)
+              return  res.send(`Registration Error: - ${err}`)
             } else {
                 let ExistingUser = await UserModel.findOne({ email: email })
                 if (ExistingUser) {
-                    res.send({ msg: "User Already Exist, Try Login" })
+                  return  res.send({ msg: "User Already Exist, Try Login" })
                 } else {
                     const newD = new Date()
                     const year = newD.getFullYear()
                     const image = "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"
                     let newUser = new UserModel({ name, email, phone_number, password: hash, gender, year, image, role: "volenteer" })
                     await newUser.save();
-                    res.send({ msg: "New User Added", user: newUser })
+                  return  res.send({ msg: "New User Added", user: newUser })
                 }
             }
         })
 
     } catch (e) {
         console.log(e)
-        res.send(`Registration Error: - ${e}`)
+       return res.send(`Registration Error: - ${e}`)
     }
 })
 volenteerRouter.patch("/upload/:id", upload.single("image"), async (req, res) => {
@@ -44,16 +42,16 @@ volenteerRouter.patch("/upload/:id", upload.single("image"), async (req, res) =>
     try {
         let ExistingUser = await UserModel.findById(id)
         if (ExistingUser) {
-            const profileimage = await cloudinary.uploader.upload(req.file.path)
+            const profileimage = await cloudUpload.uploader.upload(req.file.path)
             await UserModel.findByIdAndUpdate(id, { image: profileimage.url })
             let updated = await UserModel.findById(id)
-            res.send({ msg: "profile image uploaded succesfully", updated })
+          return  res.send({ msg: "profile image uploaded succesfully", updated })
         } else {
             res.send("User does not exists")
         }
     } catch (e) {
         console.log(e)
-        res.send(`Registration Error: - ${e}`)
+      return  res.send(`Registration Error: - ${e}`)
     }
 })
 volenteerRouter.post("/login", async (req, res) => {
@@ -65,16 +63,16 @@ volenteerRouter.post("/login", async (req, res) => {
             bcrypt.compare(password, User[0].password, (err, result) => {
                 if (result) {
                     let token = jwt.sign({ userID: User[0]._id }, "pandal");
-                    res.send({ msg: `Login Success ! WelcomeBack ${User[0].name}`, token: token, user: User });
+                 return   res.send({ msg: `Login Success ! WelcomeBack ${User[0].name}`, token: token, user: User });
                 } else {
-                    res.send({ msg: "Wrong Password" })
+                 return   res.send({ msg: "Wrong Password" })
                 }
             })
         } else {
-            res.send({ msg: `Email ${email} does not Exist. Try Registring` })
+          return   res.send({ msg: `Email ${email} does not Exist. Try Registring` })
         }
     } catch (e) {
-        res.send({ msg: "Error", reason: e })
+      return  res.send({ msg: "Error", reason: e })
     }
 })
 

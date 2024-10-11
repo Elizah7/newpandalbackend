@@ -14,12 +14,12 @@ let storage = getStorage(initializeApp(config.firebaseConfig), process.env.BUCKE
 const upload = multer({ storage: multer.memoryStorage() });
 
 
-videoRouter.post("/upload", upload.single("video"), async (req, res) => {
- const userID = req.query;
+videoRouter.post("/upload",adminauth, upload.single("video"), async (req, res) => {
+//  const userID = req.query;
  console.log("video",req.body)
- console.log("hihi")
+//  console.log("hihi")
  
-
+const adminId = req.query
 
   try {
     const storageRef = ref(storage, `videos/${req.file.originalname}`);
@@ -33,33 +33,43 @@ videoRouter.post("/upload", upload.single("video"), async (req, res) => {
     console.log(downloadUrl,"downurl")
     try {
       const d = new Date();
-      const hour = d.getHours();
-      const minute = d.getMinutes();
-      const seconds = d.getSeconds();
-      const time = hour + ":" + minute + ":" + seconds;
       const year = d.getFullYear();
-      const savedVideo = new videoModel({ videourl: downloadUrl, year, time });
+      const savedVideo = new videoModel({ videourl: downloadUrl, year,adminId });
       await savedVideo.save();
-      res.status(200).send({ msg: "Video uploaded", data: savedVideo });
+     return res.status(200).send({ msg: "Video uploaded", data: savedVideo });
     } catch (error) {
-      res.send({ msg: "Error saving video URL to MongoDB", err: error.message });
+     return res.send({ msg: "Error saving video URL to MongoDB", err: error.message });
     }
   } catch (error) {
-    res.send({ msg: "Error uploading video to Firebase", err: error.message });
+   return res.send({ msg: "Error uploading video to Firebase", err: error.message });
   }
 });
 
 videoRouter.get("/", async (req, res) => {
+  const {page} = req.query;
+  const limit = 10;
   try {
-    const data = await videoModel.find();
-    res.status(200).send({ msg: "Total videos", data: data });
+    const data = await videoModel
+    .find()
+    .skip((page - 1) * limit) // Skip the images from previous pages
+    .limit(Number(limit)); // Limit the number of images per request
+
+  const totalVideos = await videoModel.countDocuments(); // Get the total count of images
+
+ return res.status(200).send({
+    msg: "Total images",
+    data: data,
+    currentPage: page,
+    totalPages: Math.ceil(totalVideos / limit), // Calculate total pages
+  });
+
   } catch (error) {
-    res.send({ msg: "Error fetching videos from MongoDB", err: error.message });
+   return  res.send({ msg: "Error fetching videos from MongoDB", err: error.message });
   }
 });
 
-videoRouter.delete("/delete", (req, res) => {
-  // Add delete logic for videos if needed
-});
+// videoRouter.delete("/delete", (req, res) => {
+//   // Add delete logic for videos if needed
+// });
 
 module.exports = {videoRouter};

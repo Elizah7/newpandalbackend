@@ -32,23 +32,23 @@ sendEmailRoutes.post("/", async (req, res) => {
                 transPorter.sendMail(mailOption, (error, info) => {
                     if (error) {
                         console.log(error)
-                        res.send({ msg: error })
+                      return  res.send({ msg: error })
                     }
                     else {
-                        res.send({ msg: `Email has been sent`, data: info.messageId })
+                     return   res.send({ msg: `Email has been sent`, data: info.messageId })
                     }
                 })
             } catch (error) {
                 console.log(error)
-                res.send({ msg: error })
+               return res.send({ msg: error })
             }
         } else {
 
-            res.send({ msg: `Email ${email} does not Exist. Try Registring` })
+         return   res.send({ msg: `Email ${email} does not Exist. Try Registring` })
         }
     } catch (error) {
         console.log(error)
-        res.send({ msg: error })
+     return   res.send({ msg: error })
     }
 })
 sendEmailRoutes.get("/valid/:id/:token", async (req, res) => {
@@ -59,12 +59,12 @@ sendEmailRoutes.get("/valid/:id/:token", async (req, res) => {
         const singleuser = await UserModel.findOne({ _id: id, verifytoken: token });
         const varifytoken = jwt.verify(token, "pandal")
         if (singleuser, varifytoken) {
-            res.status(200).send({ msg: "user is valid", data: singleuser })
+           return res.status(200).send({ msg: "user is valid", data: singleuser })
         } else {
-            res.send({ msg: `Link is expired or user is not authenticated` })
+         return   res.send({ msg: `Link is expired or user is not authenticated` })
         }
     } catch (error) {
-        res.send({ msg: error })
+      return  res.send({ msg: error })
     }
 })
 
@@ -80,14 +80,14 @@ sendEmailRoutes.post("/:id/:token", async (req, res) => {
                     res.send(`Registration Error: - ${err}`)
                 } else {
                     let updatedpassword = await UserModel.findByIdAndUpdate({ _id: id }, { password: password });
-                    res.send({ msg: "New User Added", data: updatedpassword })
+                  return  res.send({ msg: "New User Added", data: updatedpassword })
                 }
             })
         } else {
-            res.send({ msg: `Link is expired or user is not authenticated` })
+          return  res.send({ msg: `Link is expired or user is not authenticated` })
         }
     } catch (error) {
-        res.send({ msg: error })
+      return  res.send({ msg: error })
     }
 })
 module.exports = sendEmailRoutes

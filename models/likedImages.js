@@ -1,16 +1,16 @@
 
-const mongoose = require("mongoose")
+// const mongoose = require("mongoose")
 
-const likedimagesShema = mongoose.Schema({
-    imageId: String,
-    usersArray: Array,
-    year: String,
-    time:String,
-})
+// const likedimagesShema = mongoose.Schema({
+//     imageId: String,
+//     usersId: Array,
+//     year: String,
+//     time:String,
+// })
 
 
-const imageModel = mongoose.model("images", imageShema)
+// const imageModel = mongoose.model("images", likedimagesShema)
 
-module.exports = {
-    imageModel
-}
+// module.exports = {
+//     imageModel
+// }
