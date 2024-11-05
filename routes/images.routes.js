@@ -81,6 +81,7 @@ imagesRoute.post('/images/:id/like', async (req, res) => {
     try {
       const data = await imageModel
         .find()
+        .sort({ createdAt: -1 })
         .skip((page - 1) * limit) // Skip the images from previous pages
         .limit(Number(limit)); // Limit the number of images per request
   

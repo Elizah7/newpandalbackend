@@ -46,27 +46,30 @@ const adminId = req.query
 });
 
 videoRouter.get("/", async (req, res) => {
-  const {page} = req.query;
+  const { page = 1 } = req.query; // Default to page 1 if not provided
   const limit = 10;
   try {
     const data = await videoModel
-    .find()
-    .skip((page - 1) * limit) // Skip the images from previous pages
-    .limit(Number(limit)); // Limit the number of images per request
+      .find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-  const totalVideos = await videoModel.countDocuments(); // Get the total count of images
+    const totalVideos = await videoModel.countDocuments();
+    const totalPages = Math.ceil(totalVideos / limit);
 
- return res.status(200).send({
-    msg: "Total images",
-    data: data,
-    currentPage: page,
-    totalPages: Math.ceil(totalVideos / limit), // Calculate total pages
-  });
-
+    res.status(200).send({
+      msg: "Total videos",
+      data,
+      currentPage: page,
+      totalPages,
+      hasMore: page < totalPages // Whether there are more pages to fetch
+    });
   } catch (error) {
-   return  res.send({ msg: "Error fetching videos from MongoDB", err: error.message });
+    res.status(500).send({ msg: "Error fetching videos", err: error.message });
   }
 });
+
 
 // videoRouter.delete("/delete", (req, res) => {
 //   // Add delete logic for videos if needed
