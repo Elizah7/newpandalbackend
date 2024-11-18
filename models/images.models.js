@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const likeSchema = require("./likesSchema")
+
 
 const imageSchema = mongoose.Schema({
   image: { type: String, required: true },

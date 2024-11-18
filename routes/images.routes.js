@@ -99,11 +99,20 @@ imagesRoute.post('/images/:id/like', async (req, res) => {
     }
   });
   
-
-// imagesRoute.delete("/delete", (req, res) => {
-
-// })
-
+  imagesRoute.get("/:id", async (req, res) => {
+    const { id } = req.params; 
+    console.log(id,"iii")
+    try {
+      const data = await imageModel.findById(id);
+      console.log(data)
+      res.status(200).send({
+        msg: "Image found successfully",
+        data: data,
+      });
+    } catch (error) {
+     return res.status(500).send({ msg: "An error occurred", err: error.message });
+    }
+  });
 
 module.exports = {
     imagesRoute

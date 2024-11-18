@@ -70,7 +70,18 @@ videoRouter.get("/", async (req, res) => {
   }
 });
 
-
+videoRouter.get("/:id", async (req, res) => {
+  const {id} = req.params;
+  try {
+    const data = await videoModel.findById(id)
+    res.status(200).send({
+      msg: "Total videos",
+      data,
+    });
+  } catch (error) {
+    res.status(500).send({ msg: "Error fetching videos", err: error.message });
+  }
+});
 // videoRouter.delete("/delete", (req, res) => {
 //   // Add delete logic for videos if needed
 // });
